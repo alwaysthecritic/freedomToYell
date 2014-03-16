@@ -1,15 +1,15 @@
 package samcarr.tp2wp;
 
 import java.io.File
-
 import scala.io.Source
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import IoUtils.Utf8
+import java.io.PrintWriter
 
 object Main {
+    val OutputFileName = "Migrated.txt"
     
     implicit val FileEncoding = Utf8
     
@@ -49,13 +49,18 @@ object Main {
     }
     
     private def convertImageUrls(contents: String): Try[String] = {
-        Success("")
+        Success(contents)
     }
     
     private def writeOutput(converted: String, config: Config): Try[Unit] = {
         Try {
             val dir = new File(config.outputDirName)
             dir.mkdirs()
+            
+            val outputFile = new File(dir, OutputFileName)
+            val writer = new PrintWriter(outputFile, FileEncoding.name)
+            writer.write(converted)
+            writer.close()
         }
     }
 }
