@@ -1,11 +1,13 @@
 package samcarr.tp2wp;
 
-import IoUtils._
 import java.io.File
-import scala.util.Try
+
+import scala.io.Source
 import scala.util.Failure
 import scala.util.Success
-import scala.io.Source
+import scala.util.Try
+
+import IoUtils.Utf8
 
 object Main {
     
@@ -57,5 +59,3 @@ object Main {
         }
     }
 }
-
-case class Config(inputFileName: String, outputDirName: String)
