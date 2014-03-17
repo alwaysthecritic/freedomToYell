@@ -5,10 +5,10 @@ import org.scalatest.matchers.ShouldMatchers
 import samcarr.freedomtoyell._
 
 class UrlExtractorSpec extends UnitSpec {
-    implicit val config = Config("", "www.old.com", "new.com", "")
+    implicit val config = Config("", "www.old.com", "", "")
     val extractor = new UrlExtractor()
 
-    "Migrator" should "find img URL in trivial img tag" in {
+    "UrlExtractor" should "find img URL in trivial img tag" in {
         val input = """<img src="http://www.old.com" />"""
         check(input, List("http://www.old.com"))
     }
