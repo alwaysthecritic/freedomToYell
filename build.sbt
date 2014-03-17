@@ -1,4 +1,4 @@
-name := "TP2WP"
+name := "freedomToYell"
 
 version := "1.0"
 
@@ -12,7 +12,7 @@ unmanagedSourceDirectories in Test <<= baseDirectory(base => List("src/test") ma
 
 // set the main class for the main 'run' task
 // change Compile to Test to set it for 'test:run'
-mainClass in (Compile, run) := Some("samcarr.tp2wp.Main")
+mainClass in (Compile, run) := Some("samcarr.freedomtoyell.Main")
 
 addCommandAlias("runSample", "run sample/input.txt sample/output")
 

@@ -1,4 +1,4 @@
-# TP2WP
+# FreedomToYell
 
 Takes a TypePad export file and processes it to create:
 

@@ -1,3 +1,3 @@
-package samcarr.tp2wp
+package samcarr.freedomtoyell
 
 case class Config(inputFileName: String, oldHost: String, newHost: String, outputDirName: String)
