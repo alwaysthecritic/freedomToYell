@@ -6,10 +6,12 @@ class UrlExtractor(implicit config: Config) {
     // All images - capturing the src value.
     val ImgRegex = """(?i)<img[^>]*?src\s*=\s*"([^>]*?)"""".r
     
-    // All links where href ends with wi or pi.
-    // - wi: an image shrunk to a specific size - e.g. "foo-800wi"
-    // - pi: actually serves HTML for image popup, but can be truncated to get image itself.
-    val ARegex = """(?i)<a[^>]*?href\s?=\s?"([^>]*?[wi|pi])"""".r
+    // All links where href ends with:
+    // -XXXwi: an image shrunk to a specific size - e.g. "foo-800wi"
+    // -pi: an image for use in a popup (perhaps pi = popup image?) but seems same as raw image
+    // -popup: actually serves HTML for image popup.
+    // In all cases if the suffix is removed the URL serves the original full size image.
+    val ARegex = """(?i)<a[^>]*?href\s*=\s*"([^>]*?(?:-\d+wi|-pi|-popup))"""".r
     
     def extract(content: String): Iterator[String] = {
         // qq This surely runs the regex twice for each match - must be a way to get the actual
