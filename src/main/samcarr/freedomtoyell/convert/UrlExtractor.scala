@@ -10,7 +10,7 @@ class UrlExtractor(implicit config: Config) {
     // -XXXwi: an image shrunk to a specific size - e.g. "foo-800wi"
     // -pi: an image for use in a popup (perhaps pi = popup image?) but seems same as raw image
     // -popup: actually serves HTML for image popup.
-    // In all cases if the suffix is removed the URL serves the original full size image.
+    // In all cases if the suffix is removed, the URL serves the original full size image.
     val ARegex = """(?i)<a[^>]*?href\s*=\s*"([^>]*?(?:-\d+wi|-pi|-popup))"""".r
     
     def extract(content: String): Iterator[String] = {
