@@ -1,17 +1,16 @@
 package samcarr.tp2wp;
 
 import java.io.File
-import scala.io.Source
+import java.io.PrintWriter
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import IoUtils.Utf8
-import java.io.PrintWriter
+import scala.io.Source
 
 object Main {
     val OutputFileName = "Migrated.txt"
-    
-    implicit val FileEncoding = Utf8
+    val Usage = "Usage: tp2wp <typepad_export_file> <old_host> <new_host> <output_dir>"
+    val Utf8 = "UTF8"
     
     def main(args: Array[String]) {
         migrate(args) match {
@@ -30,10 +29,10 @@ object Main {
     }
     
     private def parseArgs(args: Array[String]): Try[Config] = {
-        if (args.length < 2) {
-            Failure(new IllegalArgumentException("Usage: tp2wp <typepad_export_file> <output_dir>"))
+        if (args.length < 4) {
+            Failure(new IllegalArgumentException(Usage))
         } else {
-            Success(Config(args(0), args(1)))
+            Success(Config(args(0), args(1), args(2), args(3)))
         }
     }
     
@@ -41,7 +40,7 @@ object Main {
         Try {
             // Reading the whole file and only closing when there are no errors is not great
             // but it's quite sufficient for this one-shot command-line app.
-            val source = Source.fromFile(new File(config.inputFileName), FileEncoding.name)
+            val source = Source.fromFile(new File(config.inputFileName), Utf8)
             val contents = source.getLines().mkString("\n")
             source.close()
             contents
@@ -58,7 +57,7 @@ object Main {
             dir.mkdirs()
             
             val outputFile = new File(dir, OutputFileName)
-            val writer = new PrintWriter(outputFile, FileEncoding.name)
+            val writer = new PrintWriter(outputFile, Utf8)
             writer.write(converted)
             writer.close()
         }
