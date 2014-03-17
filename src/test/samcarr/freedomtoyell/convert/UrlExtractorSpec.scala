@@ -57,8 +57,13 @@ class UrlExtractorSpec extends UnitSpec {
         // - space around =
         // - non-lowercase tag and attribute names
         // - non-lowercase URL that only matches oldHost when case insensitive.
-        val input = """<A class = "popup" HREF = "http://www.OLD.com-pi" id="foo" />"""
-        check(input, List("http://www.OLD.com-pi"))
+        val input = """<A class = "popup" HREF = "http://www.OLD.com/123-pi" id="foo" />"""
+        check(input, List("http://www.OLD.com/123-pi"))
+    }
+    
+    it should "not find link URL where the URL does not contain the old host" in {
+        val input = """<a href="http://www.notold.com/123-pi" /></a>"""
+        check(input, List())
     }
 
     private def check(input: String, expected: List[String]) = {
