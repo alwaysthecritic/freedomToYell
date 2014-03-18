@@ -6,7 +6,6 @@ import samcarr.freedomtoyell._
 
 class UrlExtractorSpec extends UnitSpec {
     implicit val config = Config("", "www.old.com", "", "")
-    val extractor = new UrlExtractor()
 
     "UrlExtractor" should "find img URL in trivial img tag" in {
         val input = """<img src="http://www.old.com" />"""
@@ -67,6 +66,6 @@ class UrlExtractorSpec extends UnitSpec {
     }
 
     private def check(input: String, expected: List[String]) = {
-        extractor.extract(input).toList should be (expected)
+        UrlExtractor.extract(input).toList should be (expected)
     }
 }

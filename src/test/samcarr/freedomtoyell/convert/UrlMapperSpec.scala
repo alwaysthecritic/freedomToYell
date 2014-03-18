@@ -6,7 +6,6 @@ import samcarr.freedomtoyell._
 
 class UrlMapperSpec extends UnitSpec {
     implicit val config = Config("", "www.old.com", "new.com", "")
-    val mapper = new UrlMapper()
 
     "UrlMapper" should "map -XXXwi URL to same but with host changed" in {
         check("http://www.old.com/123-350wi", "http://new.com/123-350wi")
@@ -21,6 +20,6 @@ class UrlMapperSpec extends UnitSpec {
     }
 
     private def check(input: String, expected: String) = {
-        mapper.mapUrl(input) should be (expected)
+        UrlMapper.mapUrl(input) should be (expected)
     }
 }

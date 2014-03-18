@@ -2,8 +2,8 @@ package samcarr.freedomtoyell.convert
 
 import samcarr.freedomtoyell.Config
 
-class UrlMapper(implicit config: Config) {
-    def mapUrl(url: String) = {
+object UrlMapper {
+    def mapUrl(url: String)(implicit config: Config) = {
         val hostSwapped = url.replace(config.oldHost, config.newHost)
         hostSwapped.replaceAll("-(pi|popup)$", "")
     }

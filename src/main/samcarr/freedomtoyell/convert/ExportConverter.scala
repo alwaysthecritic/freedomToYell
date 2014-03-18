@@ -11,8 +11,7 @@ class ExportConverter(implicit config: Config) {
     // - Download those resources
     // - Report on what was downloaded and importantly, anything that couldn't be downloaded.
     def convert(content: String): ConversionResult = {
-        val urlExtractor = new UrlExtractor()
-        val urls = urlExtractor.extract(content)
+        val urls = UrlExtractor.extract(content)
         ConversionResult("")
     }
 }
