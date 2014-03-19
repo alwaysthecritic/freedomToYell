@@ -2,7 +2,7 @@ package samcarr.freedomtoyell.convert
 
 import samcarr.freedomtoyell.Config
 
-object UrlExtractor {
+object UriExtractor {
     // All images - capturing the src value.
     val ImgRegex = """(?i)<img[^>]*?src\s*=\s*"([^>]*?)"""".r
     
