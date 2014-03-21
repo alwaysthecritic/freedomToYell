@@ -20,7 +20,7 @@ import java.net.URI
   * - We prepend a new root dir, in which all imported images will end up.
   */
 object ImageUriMapper {
-    val NewRoot = "tp"
+    val NewRoot = "wp-content/tp"
     
     /** Returns a pair of URIs:
       * - the URI from which to import the original image (which isn't nec. the same as input URI)
