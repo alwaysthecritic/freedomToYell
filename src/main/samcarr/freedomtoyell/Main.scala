@@ -74,7 +74,9 @@ object Main {
     }
     
     private def importImages(uriMap: Map[URI, ImageUris], baseDir: File) = {
-        uriMap.values foreach { case ImageUris(importUri, finalUri) =>
+        // Poor man's parallelism by using .par, which will probably only match
+        // number of cores, but is a quick win and perfectly safe here.
+        uriMap.values.par foreach { case ImageUris(importUri, finalUri) =>
             println(s"Importing image from $importUri...")
             ImageImporter.importImage(importUri, finalUri, baseDir)
         }
