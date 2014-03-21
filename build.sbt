@@ -16,5 +16,6 @@ mainClass in (Compile, run) := Some("samcarr.freedomtoyell.Main")
 
 addCommandAlias("runSample", "run sample/input.txt alwaysthecritic.typepad.com justthesam.com sample/output")
 
-// add a test dependency on ScalaTest
+libraryDependencies += "commons-io" % "commons-io" % "2.4"
+
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"

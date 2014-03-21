@@ -9,6 +9,8 @@ import scala.io.Source
 import samcarr.freedomtoyell.convert._
 import java.net.MalformedURLException
 import java.net.URISyntaxException
+import java.net.URI
+import samcarr.freedomtoyell.image.ImageImporter
 
 object Main {
     val OutputFileName = "Migrated.txt"
@@ -16,18 +18,17 @@ object Main {
     val Utf8 = "UTF8"
     
     def main(args: Array[String]) {
-        load(args) map { case (config, content) =>
+        load(args) flatMap { case (config, content) =>
             Try {
                 val uriMap = Analyser.analyse(content)(config)
                 val dir = createOutputDir(config)
                 val migratedContent = ContentMigrator.migrate(content, uriMap)
                 writeMigratedFile(migratedContent, dir)
-                
-                // Fetch all images from source URI and save based on path of target URI
+                importImages(uriMap, dir)
             }
         } recover {
             case e: URISyntaxException => println(s"Malformed URI found: fix and re-run - ${e.getMessage()}")
-            case e: Exception => println(e.getMessage())
+            case e: Exception => println(s"Failed: $e")
         }
     }
     
@@ -57,6 +58,12 @@ object Main {
         }
     }
     
+    private def createOutputDir(config: Config): File = {
+        val dir = new File(config.outputDirName)
+        dir.mkdirs()
+        dir
+    }
+    
     private def writeMigratedFile(converted: String, dir: File): Try[Unit] = {
         Try {
             val outputFile = new File(dir, OutputFileName)
@@ -65,10 +72,11 @@ object Main {
             writer.close()
         }
     }
-  
-    private def createOutputDir(config: Config): File = {
-        val dir = new File(config.outputDirName)
-        dir.mkdirs()
-        dir
+    
+    private def importImages(uriMap: Map[URI, ImageUris], baseDir: File) = {
+        uriMap.values foreach { case ImageUris(importUri, finalUri) =>
+            println(s"Importing image from $importUri...")
+            ImageImporter.importImage(importUri, finalUri, baseDir)
+        }
     }
 }
