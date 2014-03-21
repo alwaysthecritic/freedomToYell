@@ -14,7 +14,7 @@ unmanagedSourceDirectories in Test <<= baseDirectory(base => List("src/test") ma
 // change Compile to Test to set it for 'test:run'
 mainClass in (Compile, run) := Some("samcarr.freedomtoyell.Main")
 
-addCommandAlias("runSample", "run sample/input.txt sample/output")
+addCommandAlias("runSample", "run sample/input.txt alwaysthecritic.typepad.com justthesam.com sample/output")
 
 // add a test dependency on ScalaTest
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"

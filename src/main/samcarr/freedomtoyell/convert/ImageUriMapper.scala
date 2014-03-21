@@ -22,17 +22,25 @@ import java.net.URI
 object ImageUriMapper {
     val NewRoot = "tp"
     
-    def fixedImportUri(uri: URI): URI = {
+    /** Returns a pair of URIs:
+      * - the URI from which to import the original image (which isn't nec. the same as input URI)
+      * - the new URI to use for the image.
+      */
+    def mapUri(uri: URI)(implicit config: Config): ImageUris = {
+        val importUri = uriForImport(uri)
+        ImageUris(importUri, uriForMigratedContent(importUri))
+    }
+    
+    def uriForImport(uri: URI): URI = {
         new URI(uri.toString().replaceFirst("-(pi|popup)$", ""))
     }
     
-    def migratedUri(uri: URI)(implicit config: Config): URI = {
+    def uriForMigratedContent(uri: URI)(implicit config: Config): URI = {
         val path = uri.normalize().getPath();
         val pathPrefixStripped = path.replaceFirst("^/.a/", "/")
         val pathHyphenated = pathPrefixStripped.replaceAll("(?<!^)/", "-")
         val convertedPath = "/" + NewRoot + pathHyphenated
-        
-        new URI(uri.getScheme(), uri.getUserInfo(), config.newHost, uri.getPort(),
-                convertedPath, uri.getQuery(), uri.getFragment())
+        new URI(uri.getScheme(), uri.getUserInfo(), config.newHost,
+                uri.getPort(), convertedPath, uri.getQuery(), uri.getFragment())
     }
 }

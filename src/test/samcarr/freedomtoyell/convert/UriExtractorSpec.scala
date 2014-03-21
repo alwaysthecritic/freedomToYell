@@ -3,6 +3,7 @@ package samcarr.freedomtoyell.convert
 import org.scalatest._
 import org.scalatest.matchers.ShouldMatchers
 import samcarr.freedomtoyell._
+import java.net.URI
 
 class UriExtractorSpec extends UnitSpec {
     implicit val config = Config("", "www.old.com", "", "")
@@ -66,6 +67,6 @@ class UriExtractorSpec extends UnitSpec {
     }
 
     private def check(input: String, expected: List[String]) = {
-        UriExtractor.extract(input).toList should be (expected)
+        UriExtractor.extract(input).toList should be (expected map (new URI(_)))
     }
 }
