@@ -26,15 +26,17 @@ object ImageUriMapper {
       * - the URI from which to import the original image (which isn't nec. the same as input URI)
       * - the new URI to use for the image.
       */
-    def mapUri(uri: URI)(implicit config: Config): ImageUris = {
+    def mapUri(uri: URI)(implicit config: Config): (URI, URI) = {
         val importUri = uriForImport(uri)
-        ImageUris(importUri, uriForMigratedContent(importUri))
+        (importUri, uriForMigratedContent(importUri))
     }
     
     def uriForImport(uri: URI): URI = {
         new URI(uri.toString().replaceFirst("-(pi|popup)$", ""))
     }
     
+    // qq Watch out for paths with .shared-image.html? - we really want to remove the . so
+    //    we don't end up with a hidden file.
     def uriForMigratedContent(uri: URI)(implicit config: Config): URI = {
         val path = uri.normalize().getPath();
         val pathPrefixStripped = path.replaceFirst("^/.a/", "/")

@@ -14,7 +14,7 @@ import samcarr.freedomtoyell.image.ImageImporter
 
 object Main {
     val OutputFileName = "Migrated.txt"
-    val Usage = "Usage: tp2wp <typepad_export_file> <old_host> <new_host> <output_dir>"
+    val Usage = "Usage: tp2wp <typepad_export_file> <old_host> <new_host> <article_prefix> <output_dir>"
     val Utf8 = "UTF8"
     
     def main(args: Array[String]) {
@@ -40,10 +40,10 @@ object Main {
     }
     
     private def parseArgs(args: Array[String]): Try[Config] = {
-        if (args.length < 4) {
+        if (args.length < 5) {
             Failure(new IllegalArgumentException(Usage))
         } else {
-            Success(Config(args(0), args(1), args(2), args(3)))
+            Success(Config(args(0), args(1), args(2), args(3), args(4)))
         }
     }
     
@@ -73,12 +73,15 @@ object Main {
         }
     }
     
-    private def importImages(uriMap: Map[URI, ImageUris], baseDir: File) = {
+    private def importImages(migratedUris: Set[MigratedUri], baseDir: File) = {
         // Poor man's parallelism by using .par, which will probably only match
         // number of cores, but is a quick win and perfectly safe here.
-        uriMap.values.par foreach { case ImageUris(importUri, finalUri) =>
-            println(s"Importing image from $importUri...")
-            ImageImporter.importImage(importUri, finalUri, baseDir)
+        migratedUris.par foreach {
+            case MigratedUri(_, Some(importUri), finalUri) => {
+                println(s"Importing image from $importUri...")
+                ImageImporter.importImage(importUri, finalUri, baseDir)
+            }
+            case MigratedUri(_, None, _) => ()
         }
     }
 }
