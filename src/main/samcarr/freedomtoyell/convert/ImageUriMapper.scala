@@ -17,6 +17,8 @@ import java.net.URI
   * - Typepad image paths often (but not always, depending on vintage perhaps) begin
   *   with /.a/ which we remove because it's just plain unpleasant.
   * - We convert / to -, hence all the images end up in a single flat directory
+  * - We convert any path component beginning . to - and flatten query string too, to deal
+  *   with URIs like .shared-image.html?/photos/misc/2008/09/23/foo.jpg.
   * - We prepend a new root dir, in which all imported images will end up.
   */
 object ImageUriMapper {
@@ -35,14 +37,24 @@ object ImageUriMapper {
         new URI(uri.toString().replaceFirst("-(pi|popup)$", ""))
     }
     
-    // qq Watch out for paths with .shared-image.html? - we really want to remove the . so
-    //    we don't end up with a hidden file.
     def uriForMigratedContent(uri: URI)(implicit config: Config): URI = {
-        val path = uri.normalize().getPath();
+        val path = uri.normalize().getPath()
         val pathPrefixStripped = path.replaceFirst("^/.a/", "/")
-        val pathHyphenated = pathPrefixStripped.replaceAll("(?<!^)/", "-")
+        val pathInvisiDotsHyphenated = pathPrefixStripped.replaceAll("(?<=/)\\.", "-")
+        // Replace all but the initial slash.
+        val pathHyphenated = pathInvisiDotsHyphenated.replaceAll("(?<!^)/", "-")
+        
         val convertedPath = "/" + NewRoot + pathHyphenated
+        
+        // If there is a query string, flatten it and add to path.
+        val query = uri.getQuery()
+        val finalPath = if (query != null) {
+            convertedPath + query.replace("/", "-")
+        } else {
+            convertedPath
+        }
+                
         new URI(uri.getScheme(), uri.getUserInfo(), config.newHost,
-                uri.getPort(), convertedPath, uri.getQuery(), uri.getFragment())
+                uri.getPort(), finalPath, null, null)
     }
 }
