@@ -2,6 +2,7 @@ package samcarr.freedomtoyell.convert
 
 import samcarr.freedomtoyell.Config
 import java.net.URI
+import scala.language.postfixOps
 
 sealed abstract class UriForMigration(val uri: URI)
 case class ArticleUri(_uri: URI) extends UriForMigration(_uri)

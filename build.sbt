@@ -4,6 +4,8 @@ version := "1.0"
 
 scalaVersion := "2.10.3"
 
+scalacOptions ++= Seq("-feature", "-deprecation")
+
 // set the main source directory
 unmanagedSourceDirectories in Compile <<= baseDirectory(base => List("src/main") map (base / _ ))
 

@@ -13,7 +13,7 @@ import java.net.URI
 import samcarr.freedomtoyell.image.ImageImporter
 
 object Main {
-    case class BadArgumentsException extends Exception
+    case object BadArgumentsException extends Exception
     
     val OutputFileName = "Migrated.txt"
     val Utf8 = "UTF8"
@@ -29,7 +29,7 @@ object Main {
             }
         } recover {
             case e: URISyntaxException => println(s"Malformed URI found: fix and re-run - ${e.getMessage()}")
-            case e: BadArgumentsException => println(Usage.Message)
+            case BadArgumentsException => println(Usage.Message)
             case e: Exception => println(s"Failed: $e")
         }
     }
@@ -43,7 +43,7 @@ object Main {
     
     private def parseArgs(args: Array[String]): Try[Config] = {
         if (args.length < 5) {
-            Failure(new BadArgumentsException())
+            Failure(BadArgumentsException)
         } else {
             Success(Config(args(0), args(1), args(2), args(3), args(4)))
         }
@@ -51,8 +51,8 @@ object Main {
     
     private def readInput(filename: String): Try[String] = {
         Try {
-            // Reading the whole file and only closing when there are no errors is not great
-            // but it's quite sufficient for this one-shot command-line app.
+            // Reading the whole file and only closing when there are no errors is not
+            // great but it's quite sufficient for this one-shot command-line app.
             val source = Source.fromFile(new File(filename), Utf8)
             val contents = source.getLines().mkString("\n")
             source.close()
