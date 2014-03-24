@@ -7,18 +7,19 @@ import java.net.URI
   * - the original stripped of any unnecessary bits, that we can use to import the image
   * - a new URI that we should use to access the imported image.
   *
-  * We manipulate the original URI to canonicalise it somewhat:
+  * We manipulate the original URI to get a good URI from which to import the image:
+  * - those that start .shared/image.html?/foo.jpg actually serve HTML that contains an
+  *   img using the src in the query string, so we can just strip that prefix to get a
+  *   URI for the image direct.
+  * - similarly, those that end -popup return HTML for a popup window, containing the image,
+  *   but by stripping that suffix the URI just gives us the image directly.
   * - those that end -pi are images intended for use as a popup (perhaps pi = popup image)
   *   but that suffix can be removed without affecting the result.
-  * - those that end -popup actually return HTML for a popup window, containing the image,
-  *   but by stripping that suffix the URI actually just gives us the image directly.
   * 
-  * The new URI we generate aims to be simpler, nicer and flatter:
+  * The new URI we generate from the import URI aims to be simpler, nicer and flatter:
   * - Typepad image paths often (but not always, depending on vintage perhaps) begin
   *   with /.a/ which we remove because it's just plain unpleasant.
   * - We convert / to -, hence all the images end up in a single flat directory
-  * - We convert any path component beginning . to - and flatten query string too, to deal
-  *   with URIs like .shared-image.html?/photos/misc/2008/09/23/foo.jpg.
   * - We prepend a new root dir, in which all imported images will end up.
   */
 object ImageUriMapper {
@@ -34,27 +35,19 @@ object ImageUriMapper {
     }
     
     def uriForImport(uri: URI): URI = {
-        new URI(uri.toString().replaceFirst("-(pi|popup)$", ""))
+        new URI(uri.toString().replace("/.shared/image.html?", "").replaceFirst("-(pi|popup)$", ""))
     }
     
     def uriForMigratedContent(uri: URI)(implicit config: Config): URI = {
-        val path = uri.normalize().getPath()
+        val path = uri.normalize().getPath();
         val pathPrefixStripped = path.replaceFirst("^/.a/", "/")
         val pathInvisiDotsHyphenated = pathPrefixStripped.replaceAll("(?<=/)\\.", "-")
         // Replace all but the initial slash.
         val pathHyphenated = pathInvisiDotsHyphenated.replaceAll("(?<!^)/", "-")
         
         val convertedPath = "/" + NewRoot + pathHyphenated
-        
-        // If there is a query string, flatten it and add to path.
-        val query = uri.getQuery()
-        val finalPath = if (query != null) {
-            convertedPath + query.replace("/", "-")
-        } else {
-            convertedPath
-        }
                 
         new URI(uri.getScheme(), uri.getUserInfo(), config.newHost,
-                uri.getPort(), finalPath, null, null)
+                uri.getPort(), convertedPath, null, null)
     }
 }

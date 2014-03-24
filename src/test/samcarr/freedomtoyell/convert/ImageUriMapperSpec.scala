@@ -33,10 +33,10 @@ class ImageUriMapperSpec extends UnitSpec {
                 expectedFinalUri = s"http://new.net/$nr/123")
     }
     
-    it should "convert . at start of path segment and any ? or / to hyphen" in {
-        checkMappedUri("http://old.com/.shared-image.html?/photos/misc/foo.jpg",
-                expectedImportUri = "http://old.com/.shared-image.html?/photos/misc/foo.jpg",
-                expectedFinalUri = s"http://new.net/$nr/-shared-image.html-photos-misc-foo.jpg")
+    it should "remove .shared-image.html?/" in {
+        checkMappedUri("http://old.com/.shared/image.html?/photos/misc/foo.jpg",
+                expectedImportUri = "http://old.com/photos/misc/foo.jpg",
+                expectedFinalUri = s"http://new.net/$nr/photos-misc-foo.jpg")
     }
     
     private def checkMappedUri(input: String, expectedImportUri: String, expectedFinalUri: String) = {
