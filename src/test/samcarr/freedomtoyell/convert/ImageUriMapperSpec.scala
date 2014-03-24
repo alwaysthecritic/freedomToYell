@@ -6,10 +6,10 @@ import samcarr.freedomtoyell._
 import java.net.URI
 
 class ImageUriMapperSpec extends UnitSpec {
-    implicit val config = Config("", "old.com", "new.net", "")
+    implicit val config = Config("", "old.com", "new.net", "", "")
     val nr = ImageUriMapper.NewRoot
     
-    "ImageUriMapper.fixedImportUri" should "remove -pi suffix for import URI" in {
+    "ImageUriMapper" should "remove -pi suffix for import URI" in {
         checkMappedUri("http://old.com/123-pi",
                 expectedImportUri = "http://old.com/123",
                 expectedFinalUri = s"http://new.net/$nr/123")
@@ -34,7 +34,7 @@ class ImageUriMapperSpec extends UnitSpec {
     }
     
     private def checkMappedUri(input: String, expectedImportUri: String, expectedFinalUri: String) = {
-        val ImageUris(importUri, finalUri) = ImageUriMapper.mapUri(new URI(input))
+        val (importUri, finalUri) = ImageUriMapper.mapUri(new URI(input))
         importUri.toString should be (expectedImportUri)
         finalUri.toString should be (expectedFinalUri)
     }
