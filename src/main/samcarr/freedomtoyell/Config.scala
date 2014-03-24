@@ -8,7 +8,7 @@ object Config {
 }
 
 class Config(val inputFilename: String, _oldHost: String, _newHost: String,
-        val articleDir: String, val outputDirName: String) {
+             val articleDir: String, val outputDirName: String) {
     val oldHost = _oldHost.toLowerCase()
     val newHost = _newHost.toLowerCase()
 }

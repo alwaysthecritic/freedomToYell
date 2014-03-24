@@ -13,8 +13,9 @@ import java.net.URI
 import samcarr.freedomtoyell.image.ImageImporter
 
 object Main {
+    case class BadArgumentsException extends Exception
+    
     val OutputFileName = "Migrated.txt"
-    val Usage = "Usage: tp2wp <typepad_export_file> <old_host> <new_host> <article_prefix> <output_dir>"
     val Utf8 = "UTF8"
     
     def main(args: Array[String]) {
@@ -28,6 +29,7 @@ object Main {
             }
         } recover {
             case e: URISyntaxException => println(s"Malformed URI found: fix and re-run - ${e.getMessage()}")
+            case e: BadArgumentsException => println(Usage.Message)
             case e: Exception => println(s"Failed: $e")
         }
     }
@@ -41,7 +43,7 @@ object Main {
     
     private def parseArgs(args: Array[String]): Try[Config] = {
         if (args.length < 5) {
-            Failure(new IllegalArgumentException(Usage))
+            Failure(new BadArgumentsException())
         } else {
             Success(Config(args(0), args(1), args(2), args(3), args(4)))
         }
