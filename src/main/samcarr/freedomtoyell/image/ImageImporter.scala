@@ -14,13 +14,17 @@ import org.apache.commons.io.IOUtils
 object ImageImporter {
     
     def importImage(importUri: URI, finalUri: URI, baseDir: File) = {
-        val conn = importUri.toURL.openConnection()
-        val in = conn.getInputStream();
-        val out = new FileOutputStream(targetFile(finalUri, baseDir))
-        IOUtils.copy(in, out)
-        // qq Any exception causes whole app to exit anyway, but really we should do this better.
-        in.close()
-        out.close()
+        val outFile = targetFile(finalUri, baseDir)
+        if (!outFile.exists()) {
+            println(s"Importing image from $importUri...")
+            val conn = importUri.toURL.openConnection()
+            val in = conn.getInputStream();
+            val out = new FileOutputStream(outFile)
+            IOUtils.copy(in, out)
+            // qq Any exception causes whole app to exit anyway, but really we should do this better.
+            in.close()
+            out.close()
+        }
     }
     
     private def targetFile(uri: URI, targetDir: File) = {
