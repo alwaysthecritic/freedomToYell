@@ -5,8 +5,8 @@ import java.net.URI
 import scala.language.postfixOps
 
 sealed abstract class UriForMigration(val uri: URI)
-case class ArticleUri(_uri: URI) extends UriForMigration(_uri)
-case class ImageUri(_uri: URI) extends UriForMigration(_uri)
+case class ArticleUri(override val uri: URI) extends UriForMigration(uri)
+case class ImageUri(override val uri: URI) extends UriForMigration(uri)
 
 case class MigratedUri(originalUri: URI, importUri: Option[URI], finalUri: URI)
 
