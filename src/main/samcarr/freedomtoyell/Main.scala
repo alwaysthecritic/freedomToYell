@@ -21,11 +21,16 @@ object Main {
     def main(args: Array[String]) {
         load(args) flatMap { case (config, content) =>
             Try {
-                val uriMap = Analyser.analyse(content)(config)
+                println("Analysing export file.")
+                val uris = Analyser.analyse(content)(config)
                 val dir = createOutputDir(config)
-                val migratedContent = ContentMigrator.migrate(content, uriMap)
+                
+                println("Migrating export file.")
+                val migratedContent = ContentMigrator.migrate(content, uris)
                 writeMigratedFile(migratedContent, dir)
-                importImages(uriMap, dir)
+                
+                println(s"Importing ${uris.size} images. Those we already have from previous runs will be skipped.")
+                importImages(uris, dir)
             }
         } recover {
             case e: URISyntaxException => println(s"Malformed URI found: fix and re-run - ${e.getMessage()}")
@@ -34,7 +39,7 @@ object Main {
         }
     }
     
-    private def load(args: Array[String]) = {
+    private def load(args: Array[String]): Try[(Config, String)] = {
         for {
             config <- parseArgs(args)
             content <- readInput(config.inputFilename)
@@ -80,7 +85,6 @@ object Main {
         // number of cores, but is a quick win and perfectly safe here.
         migratedUris.par foreach {
             case MigratedUri(_, Some(importUri), finalUri) => {
-                println(s"Importing image from $importUri...")
                 ImageImporter.importImage(importUri, finalUri, baseDir)
             }
             case MigratedUri(_, None, _) => ()
