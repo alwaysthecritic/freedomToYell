@@ -26,7 +26,7 @@ object Main {
                 val dir = createOutputDir(config)
                 
                 println("Migrating export file.")
-                val migratedContent = ContentMigrator.migrate(content, uris)
+                val migratedContent = updateUris(content, uris)
                 writeMigratedFile(migratedContent, dir)
                 
                 println(s"Importing ${uris.size} images. Those we already have from previous runs will be skipped.")
@@ -69,6 +69,12 @@ object Main {
         val dir = new File(config.outputDirName)
         dir.mkdirs()
         dir
+    }
+    
+    private def updateUris(content: String, uris: Set[MigratedUri]): String = {
+        uris.foldLeft(content) { case (text, MigratedUri(originalUri, _, finalUri)) =>
+            text.replaceAllLiterally(originalUri.toString, finalUri.toString)
+        }
     }
     
     private def writeMigratedFile(converted: String, dir: File): Try[Unit] = {
