@@ -29,7 +29,8 @@ object Main {
                 val migratedContent = updateUris(content, uris)
                 writeMigratedFile(migratedContent, dir)
                 
-                println(s"Importing ${uris.size} images. Those we already have from previous runs will be skipped.")
+                val totalImages = uris count { _.importUri.isDefined }
+                println(s"Importing ${totalImages} images. Those we already have from previous runs will be skipped.")
                 importImages(uris, dir)
             }
         } recover {
