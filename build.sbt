@@ -18,6 +18,9 @@ mainClass in (Compile, run) := Some("samcarr.freedomtoyell.Main")
 
 addCommandAlias("runSample", "run sample/input.txt alwaysthecritic.typepad.com justthesam.com atc/ sample/output")
 
+// Bring in OneJar settings.
+seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
+
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
 libraryDependencies += "org.scalatest" % "scalatest_2.10" % "2.1.0" % "test"
